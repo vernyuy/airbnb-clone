@@ -6,6 +6,8 @@ import { BuildingStacks } from "./building-stack";
 import { ApartmentStatus } from "../src/types/appsync";
 import { ApartmentStacks } from "./apartment-stack";
 import { RatingsAndFeedbackStack } from "./ratings-feedback-stack";
+import { BookingStacks } from "./booking-stack";
+import { Booking } from "./booking";
 
 export class PipelineStage extends Stage {
   constructor(scope: Construct, id: string, props: StageProps) {
@@ -31,6 +33,11 @@ export class PipelineStage extends Stage {
       });
 
       new RatingsAndFeedbackStack(this, "RatingsAndFeedbackStacks", {
+        airbnbDatabase: sharedStack.airbnbDatabase,
+        airbnbGraphqlApi: sharedStack.airbnbGraphqlApi,
+      });
+
+      new Booking(this, "Booking", {
         airbnbDatabase: sharedStack.airbnbDatabase,
         airbnbGraphqlApi: sharedStack.airbnbGraphqlApi,
       });

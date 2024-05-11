@@ -22,17 +22,17 @@ import { join } from "path";
 import * as sqs from  "aws-cdk-lib/aws-sqs";
 
 interface BookingStackProps extends StackProps {
-  acmsGraphqlApi: appsync.GraphqlApi;
+  airbnbGraphqlApi: appsync.GraphqlApi;
   // apiSchema: appsync.CfnGraphQLSchema;
-  acmsDatabase: Table;
-  // acmsTableDatasource: CfnDataSource;
+  airbnbDatabase: Table;
+  // airbnbTableDatasource: CfnDataSource;
 }
 
 export class BookingStacks extends Stack {
   constructor(scope: Construct, id: string, props: BookingStackProps) {
     super(scope, id, props);
 
-    const { acmsDatabase, acmsGraphqlApi } =
+    const { airbnbDatabase, airbnbGraphqlApi } =
       props;
     /**
      * Create SQS Queue and Dead letter Queue
@@ -57,7 +57,7 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
 
     const bookingLambda: NodejsFunction = new NodejsFunction(
         this,
-        "AcmsBookingHandler",
+        "airbnbBookingHandler",
         {
           tracing: Tracing.ACTIVE,
           runtime: lambda.Runtime.NODEJS_16_X,
@@ -66,7 +66,7 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
           memorySize: 1024,
           environment:{
             BOOKING_QUEUE_URL: queue.queueUrl,
-            // ACMS_DB: acmsDatabase.tableName,
+            // airbnb_DB: airbnbDatabase.tableName,
           }
         }
       );
@@ -91,7 +91,7 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
       );
 
       // Create a data source for the Lambda function
-    const lambdaDataSource = acmsGraphqlApi.addLambdaDataSource('lambda-data-source', bookingLambda);
+    const lambdaDataSource = airbnbGraphqlApi.addLambdaDataSource('lambda-data-source', bookingLambda);
 
     // lambdaDataSource.createResolver('query-resolver', {
     //     typeName: 'Query',
@@ -103,15 +103,11 @@ const lambdaRole = new Role(this, "bookingLambdaRole", {
         fieldName: 'createApartmentBooking',
       });
 
-      // lambdaResolver.node.addDependency(acmsDatabase);
-      // lambdaResolver.node.addDependency(acmsGraphqlApi);
-      // lambdaResolver.node.addDependency(apiSchema);
-      // processSQSLambda.node.addDependency(acmsDatabase)
-    acmsDatabase.grantWriteData(processSQSLambda);
-    acmsDatabase.grantReadData(bookingLambda);
+    airbnbDatabase.grantWriteData(processSQSLambda);
+    airbnbDatabase.grantReadData(bookingLambda);
     queue.grantSendMessages(bookingLambda);
     queue.grantConsumeMessages(processSQSLambda);
-    // bookingLambda.addEnvironment("ACMS_DB", acmsDatabase.tableName);
+    bookingLambda.addEnvironment("airbnb_DB", airbnbDatabase.tableName);
     bookingLambda.addEnvironment("BOOKING_QUEUE_URL", queue.queueUrl);
   }
 }
