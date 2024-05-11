@@ -11,6 +11,10 @@ import { Table } from "aws-cdk-lib/aws-dynamodb";
 import { bundleAppSyncResolver } from "./helpers";
 import { join } from "path";
 import * as sqs from "aws-cdk-lib/aws-sqs";
+import {
+  DynamoEventSource,
+  SqsEventSource,
+} from "aws-cdk-lib/aws-lambda-event-sources";
 
 interface BookingStackProps extends StackProps {
   airbnbGraphqlApi: appsync.GraphqlApi;
@@ -45,6 +49,8 @@ export class Booking extends Stack {
       },
     });
 
+    sqsPoolFn.addEventSource(new SqsEventSource(queue));
+
     const ddbConsumer = new lambda.Function(this, "ddb-lambda", {
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: "ddbConsumer.handler",
@@ -54,6 +60,12 @@ export class Booking extends Stack {
         QUEUE_URL: queue.queueUrl,
       },
     });
+
+    ddbConsumer.addEventSource(
+      new DynamoEventSource(airbnbDatabase, {
+        startingPosition: lambda.StartingPosition.LATEST,
+      })
+    );
 
     airbnbDatabase.grantStreamRead(ddbConsumer);
     airbnbDatabase.grantReadWriteData(sqsPoolFn);
