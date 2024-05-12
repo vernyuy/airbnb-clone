@@ -36,9 +36,9 @@ export class Booking extends Stack {
       });
   
       const lambdaFunction = new lambda.Function(this, 'Function', {
-        code: lambda.Code.fromAsset('src'),
+        code: lambda.Code.fromAsset(path.join(__dirname, "lambda-fns/booking")),
         handler: 'ddbConsumer.handler',
-        functionName: 'lambda-fns/booking',
+        functionName: 'ddbConsumer',
         runtime: lambda.Runtime.NODEJS_12_X,
       });
   
