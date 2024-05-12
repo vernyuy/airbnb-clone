@@ -28,7 +28,7 @@ export class Booking extends Stack {
 
     const { airbnbDatabase, airbnbGraphqlApi } = props;
 
-    const table = new dynamodb.Table(this, 'Table', {
+    const table = new dynamodb.Table(this, 'TableTrig', {
         billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
         partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
         stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
