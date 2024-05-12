@@ -105,8 +105,7 @@ export class AirbnbSharedStack extends Stack {
       },
 
       billingMode: BillingMode.PAY_PER_REQUEST,
-      stream: StreamViewType.NEW_IMAGE,
-
+      stream: StreamViewType.NEW_AND_OLD_IMAGES,
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
