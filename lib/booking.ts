@@ -28,12 +28,6 @@ export class Booking extends Stack {
 
     const { airbnbDatabase, airbnbGraphqlApi } = props;
 
-    const table = new dynamodb.Table(this, 'TableTrig', {
-        billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-        partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-        stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
-        tableName: 'Table',
-      });
   
       const lambdaFunction = new lambda.Function(this, 'Function', {
         code: lambda.Code.fromAsset(path.join(__dirname, "lambda-fns/booking")),
@@ -42,7 +36,7 @@ export class Booking extends Stack {
         runtime: lambda.Runtime.NODEJS_18_X,
       });
   
-      lambdaFunction.addEventSource(new DynamoEventSource(table, {
+      lambdaFunction.addEventSource(new DynamoEventSource(airbnbDatabase, {
         startingPosition: lambda.StartingPosition.LATEST,
       }));
     // /**
