@@ -39,7 +39,7 @@ export class Booking extends Stack {
         code: lambda.Code.fromAsset(path.join(__dirname, "lambda-fns/booking")),
         handler: 'ddbConsumer.handler',
         functionName: 'ddbConsumer',
-        runtime: lambda.Runtime.NODEJS_12_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
       });
   
       lambdaFunction.addEventSource(new DynamoEventSource(table, {
