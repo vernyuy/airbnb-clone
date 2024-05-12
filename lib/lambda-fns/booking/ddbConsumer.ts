@@ -1,16 +1,16 @@
-import { Logger } from "@aws-lambda-powertools/logger";
+// import { Logger } from "@aws-lambda-powertools/logger";
 import { DynamoDB } from "aws-sdk";
 
 import { Context, SQSEvent, SQSRecord } from "aws-lambda";
 
-import { Tracer } from "@aws-lambda-powertools/tracer";
-import { PutItemInputAttributeMap } from "aws-sdk/clients/dynamodb";
+// import { Tracer } from "@aws-lambda-powertools/tracer";
+// import { PutItemInputAttributeMap } from "aws-sdk/clients/dynamodb";
 
 const namespace = "ApartmentComplexManagementApp";
 const serviceName = "bookingHandler";
 
-const logger = new Logger({ logLevel: "INFO", serviceName: serviceName });
-const tracer = new Tracer({ serviceName: serviceName });
+// const logger = new Logger({ logLevel: "INFO", serviceName: serviceName });
+// const tracer = new Tracer({ serviceName: serviceName });
 
 exports.handler = async (event: any, context: Context) => {
     // console.log(event)
@@ -18,9 +18,9 @@ exports.handler = async (event: any, context: Context) => {
 //   const documentClient = new DynamoDB.DocumentClient();
 //   const failedMessageIds: string[] = [];
 
-  logger.addContext(context);
+//   logger.addContext(context);
 
-  logger.info(`SQS events are ${JSON.stringify(event.Records)}`);
+  console.log(`ddb events are ${JSON.stringify(event.Records)}`);
 
 //   const promises = event.Records.map(async (value: SQSRecord) => {
 //     try {
