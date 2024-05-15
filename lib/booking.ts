@@ -39,17 +39,17 @@ export class Booking extends Stack {
       },
     });
 
-    const sqsPoolFn = new lambda.Function(this, "sqs-lambda", {
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: "processSqsBooking.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "lambda-fns/booking")),
-      environment: {
-        TABLE_NAME: airbnbDatabase.tableName,
-        QUEUE_URL: queue.queueUrl,
-      },
-    });
+    // const sqsPoolFn = new lambda.Function(this, "sqs-lambda", {
+    //   runtime: lambda.Runtime.NODEJS_16_X,
+    //   handler: "processSqsBooking.handler",
+    //   code: lambda.Code.fromAsset(path.join(__dirname, "lambda-fns/booking")),
+    //   environment: {
+    //     TABLE_NAME: airbnbDatabase.tableName,
+    //     QUEUE_URL: queue.queueUrl,
+    //   },
+    // });
 
-    sqsPoolFn.addEventSource(new SqsEventSource(queue));
+    // sqsPoolFn.addEventSource(new SqsEventSource(queue));
 
     const ddbConsumer = new lambda.Function(this, "ddb-lambda", {
       runtime: lambda.Runtime.NODEJS_16_X,
@@ -68,35 +68,38 @@ export class Booking extends Stack {
     );
 
     airbnbDatabase.grantStreamRead(ddbConsumer);
-    airbnbDatabase.grantReadWriteData(sqsPoolFn);
-    queue.grantSendMessages(ddbConsumer);
-    queue.grantConsumeMessages(sqsPoolFn);
+    // airbnbDatabase.grantReadWriteData(sqsPoolFn);
+    // queue.grantSendMessages(ddbConsumer);
+    // queue.grantConsumeMessages(sqsPoolFn);
 
-    const createBookingFunction = new appsync.AppsyncFunction(
-      this,
-      "createBooking",
-      {
-        name: "createBooking",
-        api: airbnbGraphqlApi,
-        dataSource: airbnbGraphqlApi.addDynamoDbDataSource(
-          "airbnbBookingDataSource",
-          airbnbDatabase
-        ),
-        code: bundleAppSyncResolver("src/resolvers/booking/createBooking.ts"),
-        runtime: appsync.FunctionRuntime.JS_1_0_0,
-      }
-    );
+    // const createBookingFunction = new appsync.AppsyncFunction(
+    //   this,
+    //   "createBooking",
+    //   {
+    //     name: "createBooking",
+    //     api: airbnbGraphqlApi,
+    //     dataSource: airbnbGraphqlApi.addDynamoDbDataSource(
+    //       "airbnbBookingDataSource",
+    //       airbnbDatabase
+    //     ),
+    //     code: bundleAppSyncResolver("src/resolvers/booking/createBooking.ts"),
+    //     runtime: appsync.FunctionRuntime.JS_1_0_0,
+    //   }
+    // );
 
-    new appsync.Resolver(this, "createBookingResolver", {
-      api: airbnbGraphqlApi,
-      typeName: "Mutation",
-      fieldName: "createApartmentBooking",
-      code: appsync.Code.fromAsset(
-        join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
-      ),
-      runtime: appsync.FunctionRuntime.JS_1_0_0,
-      pipelineConfig: [createBookingFunction],
-    });
+    // new appsync.Resolver(this, "createBookingResolver", {
+    //   api: airbnbGraphqlApi,
+    //   typeName: "Mutation",
+    //   fieldName: "createApartmentBooking",
+    //   code: appsync.Code.fromAsset(
+    //     join(__dirname, "./js_resolvers/_before_and_after_mapping_template.js")
+    //   ),
+    //   runtime: appsync.FunctionRuntime.JS_1_0_0,
+    //   pipelineConfig: [createBookingFunction],
+    // });
+ 
+/**  First code */
+
 
     //   const lambdaRole = new Role(this, "bookingLambdaRole", {
     //         assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
