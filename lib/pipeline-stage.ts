@@ -3,10 +3,10 @@ import { Stage, StageProps } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { UserStacks } from "./user-stack";
 import { BuildingStacks } from "./building-stack";
-import { ApartmentStatus } from "../src/types/appsync";
+// import { ApartmentStatus } from "../src/types/appsync";
 import { ApartmentStacks } from "./apartment-stack";
 import { RatingsAndFeedbackStack } from "./ratings-feedback-stack";
-import { BookingStacks } from "./booking-stack";
+// import { BookingStacks } from "./booking-stack";
 import { Booking } from "./booking";
 
 export class PipelineStage extends Stage {
@@ -37,5 +37,9 @@ export class PipelineStage extends Stage {
         airbnbGraphqlApi: sharedStack.airbnbGraphqlApi,
       });
 
+      new Booking(this, "Booking", {
+        airbnbDatabase: sharedStack.airbnbDatabase,
+        airbnbGraphqlApi: sharedStack.airbnbGraphqlApi,
+      });
   }
 }
